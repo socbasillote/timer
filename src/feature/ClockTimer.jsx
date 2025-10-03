@@ -27,42 +27,52 @@ function ClockTimer({ clockSettings }) {
 
     const formatDate = (date) => {
         return date.toLocaleDateString(undefined, {
-            weekday: "short",
-            month: "short",
+            weekday: "long",
+            month: "long",
             day: "numeric",
         });
     };
 
     return (
-        <div className="flex-1 flex flex-col justify-between items-center">
-            <div>
-                <h3 className="text-lg drop-shadow-sm text-white text-center">
-                    Nothing in this world can take the place of persistence
-                </h3>
-                <p className="text-center text-sm text-white opacity-80">Calvin Coolidge</p>
-            </div>
+        <div className="h-full flex flex-col">
+            <div className="">
 
-            <div>
-                <div
-                    className="text-8xl drop-shadow-sm text-white text-center"
-                    style={{
-                        fontFeatureSettings: "'tnum'",
-                        fontVariantNumeric: "tabular-nums",
-                        lineHeight: 1.4,
-                        fontWeight: "Bold",
-                    }}
-                >
-                    {formatTime(now)}
+                <div>
+                    <h6 className="text-sm drop-shadow-sm text-white text-center">
+                        Nothing in this world can take the place of persistence
+                    </h6>
+                    <p className="text-center text-xs text-white opacity-80">Calvin Coolidge</p>
                 </div>
-                {clockSettings.showDate && (
-                    <p className="flex justify-center items-center text-lg text-white opacity-80">
-                        {formatDate(now)}
-                    </p>
-                )}
             </div>
 
-            <div>
-                <p className="text-lg text-white opacity-80">heelo</p>
+            <div className="flex-1 flex items-center justify-center">
+                <div>
+
+                    {clockSettings.showDate && (
+                        <p className="flex justify-center items-center text-lg text-white opacity-60 mb-5">
+                            {formatDate(now)}
+                        </p>
+                    )}
+                    <div
+                        className="text-9xl drop-shadow-sm text-white text-center"
+                        style={{
+                            fontFeatureSettings: "'tnum'",
+                            fontVariantNumeric: "tabular-nums",
+                            lineHeight: 0.5,
+                            fontWeight: "Bold",
+                        }}
+                    >
+                        {formatTime(now)}
+                    </div>
+                    <div className="mt-15">
+                        <h2 className="text-5xl text-center text-white  ">Good Morning, Soc.</h2>
+                    </div>
+                </div>
+            </div>
+
+
+            <div className="mt-15">
+                <p className="text-lg text-white opacity-80 text-center ">  </p>
             </div>
         </div>
 
