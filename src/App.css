@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@layer base {
+  .font-cursive {
+    font-family: 'Kolker Brush', cursive;
+  }
+
+  .font-sans {
+    font-family: "Audiowide", sans-serif;
+  }
+}
+
+
+.fade-box {
+  opacity: 1; /* fully visible by default */
+  transition: opacity 0.5s ease;
+  backdrop-filter: blur(2px); /* Tailwind's backdrop-blur-sm equivalent */
+  will-change: opacity, backdrop-filter; /* hint to browser for smoother blur */
+  width: auto;
+}
+
+.fade-box.fade {
+  opacity: 0; /* fade out to fully transparent */
+}
+
+
+.boxfade {
+  opacity: 1; /* fully visible by default */
+  transition: opacity 0.5s ease;
+  width: auto;
+}
+
+.boxfade.box {
+  opacity: 0; /* fade out to fully transparent */
+}
+
+
+/* Custom Scrollbar */
+
+.my-scroll-container {
+  overflow: auto;                /* enable scrolling */
+  scrollbar-gutter: stable;      /* reserve space so layout doesn’t jump */
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {    /* Tailwind gray-200 */
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  margin: 8px 0;           /* adds "padding" at top & bottom */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9ca3af;     /* Tailwind gray-400 */
+  border-radius: 8px;
+  min-height: 40px;        /* prevents it from being too small */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;     /* Tailwind gray-500 */
+}
+
+/* Firefox */
+
