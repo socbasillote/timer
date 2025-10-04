@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+
+/* Ken Burns (slow zoom animation) */
+
+
 @layer base {
   .font-cursive {
     font-family: 'Kolker Brush', cursive;

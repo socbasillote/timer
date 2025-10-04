@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { RotateCcw, ArrowRight, Timer, Clock } from 'lucide-react';
 
-
+import AnimatedBackground from '../animation/AnimatedBackground';
 
 import WeatherAnimation from '../components/WeatherAnimation';
 
@@ -145,7 +145,8 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
 
 
     return (
-        <div className='min-h-screen flex flex-col bg-black/20' style={{ backgroundImage: `url(${bgImage}) `, backgroundSize: "cover", backgroundPosition: 'center', backgroundBlendMode: "overlay" }}>
+        <AnimatedBackground bgImage={bgImage} >
+        <div className='min-h-screen flex flex-col'>
             <WeatherAnimation mode={uiSettings.weather} />
             {/* Navigation */}
             <div className=' shadow-s   sticky top-0 z-50 w-full'>
@@ -222,6 +223,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                 </div>
             </div>
         </div>
+        </AnimatedBackground>
     )
 }
 
