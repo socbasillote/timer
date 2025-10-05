@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function AnimatedBackground({ bgImage, children }) {
+function AnimatedBackground({ bgImage, children, zoom }) {
   const [images, setImages] = useState([{ url: bgImage, active: true }]);
 
   useEffect(() => {
@@ -10,16 +10,17 @@ function AnimatedBackground({ bgImage, children }) {
     setImages((prev) =>
       [...prev.map((img) => ({ ...img, active: false })), { url: bgImage, active: true }]
     );
+
   }, [bgImage]);
 
   return (
-    <div className="relative w-full h-full min-h-screen overflow-hidden">
+    <div className={`relative w-full h-full min-h-screen overflow-hidden`}>
       {images.map((img, i) => (
         <div
           key={i}
-          className={`absolute inset-0 bg-cover bg-center ${
-            img.active ? "animate-fadeIn" : "animate-fadeOut"
-          }`}
+          className={`absolute inset-0 bg-cover bg-center bg-scale ${
+            zoom ? "scale-zoom" : "scale-default"
+          } ${img.active ? "animate-fadeIn" : "animate-fadeOut"}`}
           style={{ backgroundImage: `url(${img.url})` }}
         />
       ))}

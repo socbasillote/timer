@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function ClockTimer({ clockSettings }) {
+function ClockTimer({ clockSettings, username }) {
     const [now, setNow] = useState(new Date());
 
     useEffect(() => {
@@ -65,7 +65,7 @@ function ClockTimer({ clockSettings }) {
                         {formatTime(now)}
                     </div>
                     <div className="mt-15">
-                        <h2 className="text-5xl text-center text-white  ">Good Morning, Soc.</h2>
+                        <h2 className="text-5xl text-center text-white  ">Good Morning{`${username ? `, ${username}.` : ""} `}</h2>
                     </div>
                 </div>
             </div>

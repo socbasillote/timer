@@ -20,24 +20,20 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
     const [viewMode, setViewMode] = useState('clock');
     const [isMuted, setIsMuted] = useState(false);
 
-
-
-    const bgImage = settings.bgImage;
-
-
-
-    const focusMode = settings.focusMode;
-
-
-
     const [isRunning, setIsRunning] = useState(false);
-
-
-
     const [isMouseActive, setIsMouseActive] = useState(true);
     const [activeTab, setActiveTab] = useState(null);
 
     const audioRefs = useRef({});
+    const bgImage = settings.bgImage;
+    const focusMode = settings.focusMode;
+
+    const [username, setUsername] = useState(localStorage.getItem("username") || "");
+    const [isAskingName, setIsAskingName] = useState(!localStorage.getItem("username"));
+    const [tempName, setTempName] = useState("");
+    const [isFadingOut, setIsFadingOut] = useState(false);
+
+
 
 
     // Focus Mode
@@ -145,14 +141,65 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
 
 
     return (
-        <AnimatedBackground bgImage={bgImage} >
+        
+        <AnimatedBackground bgImage={bgImage} zoom={viewMode === "pomodoro"}>
+            {isAskingName && (
+            <div
+                className={`fixed inset-0 flex items-center justify-center bg-black backdrop-blur-sm z-[9999] px-4 ${
+                isFadingOut ? "custom-fade-out" : "custom-fade-in"
+                }`}
+            >
+                <div
+                className={`flex flex-col items-center text-center gap-8 max-w-lg w-full transform transition-transform duration-700 ${
+                    isFadingOut ? "scale-95" : "scale-100"
+                }`}
+                >
+                {/* Heading */}
+                <h1 className="text-6xl font-semibold text-white tracking-wide">Welcome!</h1>
+
+                {/* Card Section */}
+                <div className="text-white w-full">
+                    <p className="mb-6 opacity-90 text-2xl">
+                    What’s the name you’d like me to call you?
+                    </p>
+
+                    {/* Input field */}
+                    <input
+                    type="text"
+                    value={tempName}
+                    onChange={(e) => setTempName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="w-full bg-transparent border-b border-white/50 text-white text-xl text-center focus:outline-none focus:border-white placeholder-white/40 py-2 transition-all"
+                    />
+
+                    {/* Continue button */}
+                    <button
+                    onClick={() => {
+                        if (tempName.trim()) {
+                        setIsFadingOut(true); // trigger fade-out
+                        setTimeout(() => {
+                            localStorage.setItem("username", tempName.trim());
+                            setUsername(tempName.trim());
+                            setIsAskingName(false);
+                        }, 900); // matches fade-out animation duration
+                        }
+                    }}
+                    className="mt-8 max-w-3xs w-full bg-white/20 hover:bg-white/30 py-3 rounded-lg transition-all text-lg font-medium"
+                    >
+                    Continue
+                    </button>
+                </div>
+                </div>
+            </div>
+            )}
+
         <div className='min-h-screen flex flex-col'>
             <WeatherAnimation mode={uiSettings.weather} />
             {/* Navigation */}
             <div className=' shadow-s   sticky top-0 z-50 w-full'>
                 <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                     <nav className='p-3  flex gap-3 justify-between'>
-                        <Link to="/" className='text-white'>Home</Link>
+                        <Link to="/" className='text-white'><h1 className='text-2xl'>Khronoflow</h1></Link>
                         {/* <Link to="/options" className='text-white'>Options</Link>  */}
                         <div className={`fade-box ${isMouseActive ? '' : 'fade'}`}>
                             <button
@@ -163,6 +210,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                     );
                                     if (!confirmSwitch) return; // cancel switch
                                     }
+
                                     setViewMode(viewMode === "pomodoro" ? "clock" : "pomodoro");
                                     setIsRunning(false);
                                 }}
@@ -183,7 +231,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
             <div className='flex-1 p-6 flex min-h-0'>
                 {viewMode === 'pomodoro' ? (
                     // Pomodoro
-                    <div className='flex-1 flex items-center justify-center'>
+                    <div className='flex-1 flex items-center justify-center '>
                         <PomodoroTimer 
                             settings={settings} 
                             setSettings={setSettings} 
@@ -195,8 +243,8 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                         />
                     </div>
                 ) : (
-                    <div className='flex-1'>
-                        <ClockTimer clockSettings={clockSettings} />
+                    <div className='flex-1 clock-zoom-in'>
+                        <ClockTimer clockSettings={clockSettings} username={username} />
                     </div>
                 )}
             </div>
