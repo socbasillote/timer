@@ -68,6 +68,26 @@
 }
 
 
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.custom-fade-out {
+  opacity: 0.2;
+  transition: opacity 1s ease;
+}
+
 
 /* Smooth transitions for all elements */
 * {

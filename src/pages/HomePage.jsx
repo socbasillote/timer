@@ -1,9 +1,7 @@
-import React, { use, useRef, lazy, Suspense } from 'react'
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React, {  useRef, useEffect, useState} from 'react'
 import { Link } from 'react-router-dom';
 
-import { RotateCcw, ArrowRight, Timer, Clock } from 'lucide-react';
+import {  Timer, Clock } from 'lucide-react';
 
 import AnimatedBackground from '../animation/AnimatedBackground';
 
@@ -32,7 +30,9 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
     const [isAskingName, setIsAskingName] = useState(!localStorage.getItem("username"));
     const [tempName, setTempName] = useState("");
     const [isFadingOut, setIsFadingOut] = useState(false);
-
+    
+    const [showGreeting, setShowGreeting] = useState(false);
+    const [showMainContent, setShowMainContent] = useState(!isAskingName);
 
 
 
@@ -141,8 +141,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
 
 
     return (
-        
-        <AnimatedBackground bgImage={bgImage} zoom={viewMode === "pomodoro"}>
+        <div className='bg-black'>
             {isAskingName && (
             <div
                 className={`fixed inset-0 flex items-center justify-center bg-black backdrop-blur-sm z-[9999] px-4 ${
@@ -181,6 +180,21 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                             localStorage.setItem("username", tempName.trim());
                             setUsername(tempName.trim());
                             setIsAskingName(false);
+                            setShowGreeting(true);
+
+                            // hide greeting after 2 seconds
+                            setTimeout(() => {
+                                const fadeTimer = setTimeout(() => {
+    setShowGreeting(false);
+    setShowMainContent(true);
+  }, 1000); // fade-out duration (matches CSS)
+
+  // trigger fade-out animation
+  const greetingEl = document.querySelector('.greeting-screen');
+  if (greetingEl) greetingEl.classList.add('custom-fade-out');
+
+  return () => clearTimeout(fadeTimer);
+                            }, 3000);
                         }, 900); // matches fade-out animation duration
                         }
                     }}
@@ -192,7 +206,24 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                 </div>
             </div>
             )}
+        
+        {showGreeting && username && (
+            <div
+                className={`greeting-screen fixed inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-1000 ${
+                showGreeting ? "opacity-100 bg-gradient-to-b from-black/70 to-black/40 backdrop-blur-md" : "opacity-0"
+                } z-[9998]`}
+            >
+                <h1 className="text-5xl font-bold text-white animate-fade-in-up">
+                Welcome, {username}!
+                </h1>
+                <p className="mt-4 text-xl text-white/80 animate-fade-in-up delay-200">
+                Glad to see you here.
+                </p>
+            </div>
+        )}
 
+            {showMainContent && (
+        <AnimatedBackground bgImage={bgImage} zoom={viewMode === "pomodoro"}>
         <div className='min-h-screen flex flex-col'>
             <WeatherAnimation mode={uiSettings.weather} />
             {/* Navigation */}
@@ -243,7 +274,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                         />
                     </div>
                 ) : (
-                    <div className='flex-1 clock-zoom-in'>
+                    <div className='flex-1 '>
                         <ClockTimer clockSettings={clockSettings} username={username} />
                     </div>
                 )}
@@ -271,7 +302,10 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                 </div>
             </div>
         </div>
+            
         </AnimatedBackground>
+        )}
+        </div>
     )
 }
 
