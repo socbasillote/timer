@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function ClockTimer({ clockSettings, username }) {
+function ClockTimer({ clockSettings, username, animate }) {
     const [now, setNow] = useState(new Date());
 
     useEffect(() => {
@@ -34,7 +34,7 @@ function ClockTimer({ clockSettings, username }) {
     };
 
     return (
-        <div className="h-full flex flex-col">
+        <div className={`h-full flex flex-col ${animate ? 'animate-fade-in-up' : ""}`}>
             <div className="">
 
                 <div>

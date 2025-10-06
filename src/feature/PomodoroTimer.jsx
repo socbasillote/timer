@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { RotateCcw, ArrowRight, } from 'lucide-react';
+import { RotateCcw, ArrowRight,Play, CirclePause   } from 'lucide-react';
 
 import ProgressRing from '../components/ProgressRing';
 import ProgressLine from '../components/ProgressLine';
@@ -13,6 +13,7 @@ function PomodoroTimer({
     activeTab,
     setActiveTab,
     isMouseActive,
+    animate
 }) {
 
     const calledRef = useRef(false);
@@ -249,7 +250,7 @@ function PomodoroTimer({
     }
     return (
         <div>
-            <div className='  '>
+            <div className={`${animate ? 'animate-fade-in-up delay-1000' : ""}`}>
                 <div className="" >
                     {/* Set timer buttons */}
 
@@ -398,11 +399,11 @@ function PomodoroTimer({
                                 {/* Start / Pause button */}
                                 <button
                                     onClick={isRunning ? pauseButton : startButton}
-                                    className="px-6 py-2 bg-white text-black rounded-lg cursor-pointer text-lg font-medium
+                                    className="px-6 py-4 bg-white/40 backdrop-blur-2xl text-white rounded-lg cursor-pointer  font-medium
                                                         shadow-md transition-all duration-300 
-                                                        hover:bg-gray-100 hover:shadow-lg hover:scale-105 active:scale-95"
+                                                        hover:bg-white hover:shadow-lg hover:text-gray-300 hover:scale-105 active:scale-95"
                                 >
-                                    {isRunning ? "Pause" : "Start"}
+                                    {isRunning ? <CirclePause size={32}/> : <Play size={32}/>}
                                 </button>
 
                                 {/* Reset button */}

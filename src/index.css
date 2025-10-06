@@ -16,27 +16,45 @@
 }
 
 .animate-fadeOut {
-  animation: fadeOut 0.9s ease-in-out forwards;
+  animation: fadeOut 0.9s ease-in-out forwards; 
 }
 
 
 @keyframes customFadeIn {
-  from { opacity: 1; }
-  to { opacity: 1; }
+  from {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.9); /* start fully transparent */
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.9); /* end dark and visible */
+    backdrop-filter: blur(8px);
+  }
 }
 
 @keyframes customFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+  }
+  to {
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0); /* fade to transparent */
+    backdrop-filter: blur(0px);
+  }
 }
-/* Unique animation classes */
+
+/* Animation classes */
 .custom-fade-in {
-  animation: customFadeIn 0.9s ease-in-out forwards;
+  animation: customFadeIn 1s ease-in-out forwards;
 }
 
 .custom-fade-out {
-  animation: customFadeOut 0.9s ease-in-out forwards;
+  animation: customFadeOut 1s ease-in-out forwards;
 }
+
 
 @keyframes clockZoomIn {
   from {
@@ -71,7 +89,7 @@
 @keyframes fadeInUp {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   100% {
     opacity: 1;
@@ -83,18 +101,36 @@
   animation: fadeInUp 0.8s ease-out forwards;
 }
 
-.custom-fade-out {
-  opacity: 0.2;
-  transition: opacity 1s ease;
-}
+
+
 
 
 /* Smooth transitions for all elements */
 * {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-property: color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
+
+
+@keyframes customFadeOutOpacity {
+  from {
+    opacity: 1;
+
+  }
+  to {
+    opacity: 0;
+
+  }
+}
+
+.custom-fade-out {
+  animation: customFadeOutOpacity 1s ease-in-out forwards;
+}
+.greeting-screen {
+ background-color: rgba(0, 0, 0);
+}
+
 
 
 /* Focus styles */

@@ -20,7 +20,7 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
       {/* Modal */}
       <div
         className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 
-                   bg-white/90 text-gray-900 rounded-2xl shadow-xl 
+                   bg-white/90 text-gray-900 rounded-2xl shadow-xl backdrop-blur-3xl
                    p-6 w-[440px] z-50 animate-slideUp 
                    max-h-[400px]  my-scroll-container"
         onClick={(e) => e.stopPropagation()}

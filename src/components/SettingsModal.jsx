@@ -115,11 +115,11 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
   return (
     <>
       {/* Backdrop */}
-      <div  />
+      <div className="backdrop-blur-md" />
 
       {/* Modal */}
       <div
-        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 
+        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4
                    bg-white/90 text-gray-900 rounded-2xl shadow-xl 
                    p-6 w-[440px] z-50 animate-slideUp 
                    max-h-[400px]  my-scroll-container"
@@ -241,21 +241,21 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
               <ColorInput
                 label="Pomodoro Ring Color"
                 keyName="bgColor"
-                options={["#ff4b4b", "#ff6b6b", "#ff2d2d"]}
+                options={["#F7F7F7", "#F3F2ED", "#fff"]}
                 settings={settings}
                 updateSetting={updateSetting}
               />
               <ColorInput
                 label="Short Break Ring Color"
                 keyName="bgBreakColor"
-                options={["#4bff4b", "#6bff6b", "#2dff2d"]}
+                options={["#F4F5F8", "#E9ECF1", "#D9DFE6"]}
                 settings={settings}
                 updateSetting={updateSetting}
               />
               <ColorInput
                 label="Long Break Ring Color"
                 keyName="bgLongBreak"
-                options={["#4b4bff", "#6b6bff", "#2d2dff"]}
+                options={["#C5D0BB", "#A5B4A0", "#879A86"]}
                 settings={settings}
                 updateSetting={updateSetting}
               />
