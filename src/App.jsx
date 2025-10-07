@@ -20,7 +20,7 @@ function App() {
         bgColor: "#FF0000",
         bgBreakColor: "#3e3e3e",
         bgLongBreak: "#f0fff8",
-        workTime: 0.1,
+        workTime: 0.2,
         shortBreak: 0.1,
         longBreak: 6,
         longBreakInterval: 4,

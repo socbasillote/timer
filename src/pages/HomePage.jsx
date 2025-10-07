@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom';
 
 import { Timer, Clock } from 'lucide-react';
@@ -11,6 +11,8 @@ import ClockTimer from '../feature/ClockTimer';
 
 import ToolbarBottom from '../components/ToolbarBottom';
 import PomodoroTimer from '../feature/PomodoroTimer';
+
+import themes from '../appdata/themes';
 
 
 function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSettings, setClockSettings }) {
@@ -140,6 +142,12 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
     };
 
 
+    const randomNatureBackground = useMemo(() => {
+        const natureImages = themes.Nature;
+        const randomIndex = Math.floor(Math.random() * natureImages.length);
+        return natureImages[randomIndex].src
+    },[]) ;
+
     const showGreetingButton = () => {
         setIsAskingName(false);
         setShowGreeting(true);
@@ -166,6 +174,12 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                     <div
                         className={`fixed inset-0 flex items-center justify-center bg-black backdrop-blur-sm z-[9999] px-4 ${isFadingOut ? "" : "custom-fade-in"
                             }`}
+                            style={{
+                                backgroundImage: `url(${randomNatureBackground})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                            }}
                     >
                         {!forSignUp && (
                             <div
@@ -187,7 +201,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                     value={tempName}
                                     onChange={(e) => setTempName(e.target.value)}
                                     placeholder="Enter your name"
-                                    className="w-full bg-transparent border-b border-white/50 text-white text-xl text-center focus:outline-none focus:border-white placeholder-white/40 py-2 transition-all"
+                                    className="w-full bg-transparent border-b border-white/50 text-white text-xl text-center focus:outline-none focus:border-white placeholder-white/80 py-2 transition-all"
                                 />
 
                                 {/* Continue button */}
@@ -199,7 +213,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                             setForSignUp(true);
                                         }
                                     }}
-                                    className="mt-8 max-w-3xs w-full bg-white/20 hover:bg-white/30 py-3 rounded-lg transition-all text-lg font-medium"
+                                    className="mt-8 max-w-3xs w-full bg-white/40 hover:bg-white/30 py-3 rounded-lg transition-all text-lg font-medium"
                                 >
                                     Continue
                                 </button>
@@ -208,7 +222,14 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                         )}
 
                         {forSignUp && (
-                        <div className={`absolute inset-0 flex flex-col items-center justify-center text-white text-center transition-opacity duration-700 ${forSignUp ? "opacity-100" : "opacity-0"}`}>
+                        <div className={`absolute inset-0 flex flex-col items-center justify-center text-white text-center transition-opacity duration-700 ${forSignUp ? "opacity-100" : "opacity-0"}`}
+                        style={{
+                                backgroundImage: `url(${randomNatureBackground})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                            }}
+                        >
                             <button
                                 className="bg-white text-black py-3 rounded-lg hover:bg-gray-200 transition"
                                 onClick={showGreetingButton}
@@ -234,7 +255,14 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
 
 
             {showGreeting && username && (
-            <div className={`greeting-screen fixed inset-0 flex flex-col items-center justify-center text-center z-[9999]`}>
+            <div className={`greeting-screen fixed inset-0 flex flex-col items-center justify-center text-center z-[9999]`}
+            style={{
+                                backgroundImage: `url(${randomNatureBackground})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                            }}
+            >
 
                 <h1 className="text-5xl font-bold text-white animate-fade-in-up">
                 Welcome, {username}!
@@ -255,9 +283,12 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                         <div className=' shadow-s   sticky top-0 z-50 w-full'>
                             <div className=' mx-auto px-4 sm:px-6 lg:px-8'>
                                 <nav className='p-3  flex gap-3 justify-between'>
-                                    <Link to="/" className='text-white'><h1 className='text-2xl'>Khronoflow</h1></Link>
+                                    <Link to="/" className='relative inline-block'>
+                                        <h1 className='relative text-2xl font-semibold text-white z-10'>Khronoflow</h1> 
+                                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
+                                        </Link>
                                     {/* <Link to="/options" className='text-white'>Options</Link>  */}
-                                    <div className={`fade-box ${isMouseActive ? '' : 'fade'}`}>
+                                    <div className={` ${isMouseActive ? '' : 'fade'}`}>
                                         <button
                                             onClick={() => {
                                                 if (viewMode === "pomodoro") {
@@ -278,6 +309,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                                 <Timer className="w-6 h-6" />
                                             )}
                                         </button>
+                                        
                                     </div>
 
                                 </nav>

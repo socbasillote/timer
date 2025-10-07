@@ -19,10 +19,21 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
 
       {/* Modal */}
       <div
-        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 
-                   bg-white/90 text-gray-900 rounded-2xl shadow-xl backdrop-blur-3xl
-                   p-6 w-[440px] z-50 animate-slideUp 
-                   max-h-[400px]  my-scroll-container"
+        className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4
+    w-[440px] max-h-[400px] p-6 rounded-2xl
+    z-50 animate-slideUp my-scroll-container
+
+    /* Glassmorphism styling */
+    bg-white/90 backdrop-blur-2xl border border-white/20
+    shadow-[0_8px_40px_rgba(255,255,255,0.1)]
+
+    /* Smooth transitions */
+    transition-all duration-300 ease-in-out
+
+    /* Text styling */
+    text-white
+    dark:text-gray-100
+  "
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -45,7 +56,7 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
               onClick={() => setActiveTheme(theme)}
               className={`px-3 py-1.5 rounded-t-lg text-sm font-medium transition ${
                 activeTheme === theme
-                  ? "bg-blue-500 text-white"
+                  ? "khrono-color text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
@@ -56,14 +67,14 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
 
         {/* Image Grid */}
         <div className="grid grid-cols-2 gap-4">
-          {themes[activeTheme].map(({ src, font, subFont, theme, imageName, owner }, idx) => {
+          {themes[activeTheme].map(({ src, font, subFont, location, owner, site }, idx) => {
             const isSelected = settings.bgImage === src;
             return (
               <button
                 key={idx}
                 className={`relative rounded-xl overflow-hidden group shadow-md transition-all duration-200 ${
                   isSelected
-                    ? "ring-4 ring-blue-500 scale-105"
+                    ? "ring-2 khronotext-color scale-105"
                     : "hover:scale-105 hover:shadow-lg"
                 }`}
                 onClick={() =>
@@ -86,7 +97,7 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
                 <div
                   className={`absolute inset-0 transition ${
                     isSelected
-                      ? "bg-blue-500/30"
+                      ? "bgkhronotext1-coloropacity"
                       : "bg-black/0 group-hover:bg-black/40"
                   }`}
                 />
@@ -94,17 +105,17 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
                 {/* Hover Info */}
                 <div className="absolute inset-0 flex flex-col justify-end p-2 opacity-0 group-hover:opacity-100 transition-opacity text-left">
                   <span className="text-white text-xs font-semibold">
-                    {theme}
+                    {location}
                   </span>
-                  <span className="text-gray-200 text-xs">{imageName}</span>
+                  <span className="text-gray-200 text-xs">{owner}</span>
                   <span className="text-gray-300 text-[10px] italic">
-                    {owner}
+                    {site}
                   </span>
                 </div>
 
                 {/* Selected Badge */}
                 {isSelected && (
-                  <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">
+                  <span className="absolute top-2 right-2 bgkhronotext-color text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">
                     Selected
                   </span>
                 )}

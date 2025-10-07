@@ -15,10 +15,12 @@
 }
 
 
+
+
 .fade-box {
   opacity: 1; /* fully visible by default */
   transition: opacity 0.5s ease;
-  backdrop-filter: blur(2px); /* Tailwind's backdrop-blur-sm equivalent */
+  backdrop-filter: blur(3px); /* Tailwind's backdrop-blur-sm equivalent */
   will-change: opacity, backdrop-filter; /* hint to browser for smoother blur */
   width: auto;
 }

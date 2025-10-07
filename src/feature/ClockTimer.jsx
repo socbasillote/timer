@@ -35,13 +35,18 @@ function ClockTimer({ clockSettings, username, animate }) {
 
     return (
         <div className={`h-full flex flex-col ${animate ? 'animate-fade-in-up' : ""}`}>
-            <div className="">
+            <div className="flex justify-center mt-2">
+                <div className="relative inline-block px-4 py-2 text-center">
+                    {/* Soft spotlight background behind quote */}
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                         w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
 
-                <div>
-                    <h6 className="text-sm drop-shadow-sm text-white text-center">
-                        Nothing in this world can take the place of persistence
+                    <h6 className="text-sm text-white">
+                    Nothing in this world can take the place of persistence
                     </h6>
-                    <p className="text-center text-xs text-white opacity-80">Calvin Coolidge</p>
+                    <p className="text-xs text-white opacity-80">
+                    Calvin Coolidge
+                    </p>
                 </div>
             </div>
 

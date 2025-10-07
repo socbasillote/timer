@@ -4,7 +4,7 @@ const ProgressLine = ({
   progress = 0,          // default to 0
   height = 12,           // slightly thicker
   color = '#4b9fff',
-  background = '#e5e7eb', // gray-200
+  background = 'rgba(255, 255, 255, 0.4)', // gray-200
   className = ''
 }) => {
   return (

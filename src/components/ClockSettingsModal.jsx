@@ -13,7 +13,7 @@ function ClockSettingsModal({ isOpen, onClose, clockSettings, setClockSettings }
     <button
       onClick={onToggle}
       className={`w-10 h-5 flex items-center rounded-full p-1 transition-colors ${
-        enabled ? "bg-blue-600" : "bg-gray-400"
+        enabled ? "bgkhronotext-color" : "bg-gray-400"
       }`}
     >
       <div

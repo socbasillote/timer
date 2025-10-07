@@ -109,10 +109,11 @@ function PomodoroTimer({
             if (notificationOn) {
                 if (timeLeft === notificationTime && backgroundColor == 'bgPomodoro') {
                     notify(`${notificationTime} seconds left!`)
+                    playSound('/remindernotification2.mp3');
                 }
                 if (timeLeft === 0 && backgroundColor == 'bgPomodoro') {
                     notify("Time's up!")
-                    playSound('/ding.mp3');
+                    playSound('/finishtime.mp3');
                 }
             }
     
@@ -130,7 +131,8 @@ function PomodoroTimer({
             console.log('pomodoro');
             console.log(sessionCount)
             setBackgroundColor('bgPomodoro')
-            playSound('/startPomodoro.mp3');
+            
+            playSound('/startnotification2.mp3');
         } else if (sessionCount % longBreakInterval === 0) {
             if (!autoLongBreak) { setIsRunning(false); }
 
@@ -153,14 +155,14 @@ function PomodoroTimer({
         if (sessionCount == 0 && backgroundColor == 'bgPomodoro') {
             setSessionCount(prev => prev + 1);
         }
-        playSound('/start.mp3');
+        playSound('/start22.mp3');
         setIsRunning(true);
 
     }
 
     const pauseButton = () => {
         setIsRunning(false);
-        playSound('/pause.mp3');
+        playSound('/pause22.mp3');
     }
 
     const resetButton = () => {
@@ -399,9 +401,13 @@ function PomodoroTimer({
                                 {/* Start / Pause button */}
                                 <button
                                     onClick={isRunning ? pauseButton : startButton}
-                                    className="px-6 py-4 bg-white/40 backdrop-blur-2xl text-white rounded-lg cursor-pointer  font-medium
-                                                        shadow-md transition-all duration-300 
-                                                        hover:bg-white hover:shadow-lg hover:text-gray-300 hover:scale-105 active:scale-95"
+                                    className="relative px-5 py-3 rounded-2xl cursor-pointer font-medium
+    text-white transition-all duration-300 ease-in-out
+    bg-white/30 border border-white/25 backdrop-blur-2xl
+    shadow-[0_4px_30px_rgba(255,255,255,0.1)]
+    hover:bg-white/25 hover:shadow-[0_6px_40px_rgba(255,255,255,0.15)]
+    hover:scale-105 active:scale-95
+                                                "
                                 >
                                     {isRunning ? <CirclePause size={32}/> : <Play size={32}/>}
                                 </button>
@@ -434,9 +440,9 @@ function PomodoroTimer({
                             </div>
                         </div>
 
-                        <div className='text-center mt-3 text-white'>
+                        {/* <div className='text-center mt-3 text-white'>
                             <p>Session count: {sessionCount}</p>
-                        </div>
+                        </div> */}
                     </div>
 
                 </div>

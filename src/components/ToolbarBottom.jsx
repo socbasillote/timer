@@ -31,7 +31,7 @@ function ToolbarBottom({
           onClick={() => setActiveTab(activeTab === "theme" ? null : "theme")}
           className={`p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
             activeTab === "theme"
-              ? "bg-white/20 text-blue-400"
+              ? "bg-white/20 khronotext-color"
               : "bg-white/10 hover:bg-white/20"
           }`}
         >
@@ -43,7 +43,7 @@ function ToolbarBottom({
           onClick={() => setActiveTab(activeTab === "cloud" ? null : "cloud")}
           className={`p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
             activeTab === "cloud"
-              ? "bg-white/20 text-blue-400"
+              ? "bg-white/20 khronotext-color"
               : "bg-white/10 hover:bg-white/20"
           }`}
         >
@@ -55,7 +55,7 @@ function ToolbarBottom({
           onClick={() => setActiveTab(activeTab === "timer" ? null : "timer")}
           className={`p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
             activeTab === "timer"
-              ? "bg-white/20 text-blue-400"
+              ? "bg-white/20 khronotext-color"
               : "bg-white/10 hover:bg-white/20"
           }`}
         >
@@ -67,7 +67,7 @@ function ToolbarBottom({
           onClick={() => setActiveTab(activeTab === "clock" ? null : "clock")}
           className={`p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
             activeTab === "clock"
-              ? "bg-white/20 text-pink-400"
+              ? "bg-white/20 khronotext-color"
               : "bg-white/10 hover:bg-white/20"
           }`}
         >
