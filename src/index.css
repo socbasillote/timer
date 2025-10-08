@@ -217,5 +217,10 @@
 }
 .borderkhroos2 {
   border-width: 2px;
-  border-color: #29DDF6;
+  border-color: #57dcee;
+}
+
+input[type="range"] {
+  @apply w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#29DDF6];
+  background: linear-gradient(to right, #29DDF6 var(--value, 50%), #4b5563 var(--value, 50%));
 }

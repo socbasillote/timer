@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Waves,
@@ -24,6 +24,9 @@ function ModeSoundModal({
 }) {
   const [activeTab, setActiveTab] = useState("sounds");
 
+
+
+
   // ---- Ambient Sounds ----
   const sounds = [
     { label: "Waves", key: "waves", src: "/sounds/waves.mp3", icon: Waves },
@@ -33,6 +36,17 @@ function ModeSoundModal({
     { label: "Bubbling", key: "bubbling", src: "/sounds/fireplace.mp3", icon: Bubbles },
     { label: "Cricket", key: "cricket", src: "/sounds/fireplace.mp3", icon: MoonStar },
   ];
+
+  useEffect(() => {
+    sounds.forEach((sound) => {
+      const volumeKey = `${sound.key}Volume`;
+      const input = document.getElementById(`${sound.key}-slider`);
+      if (input) {
+        const percent = (uiSettings[volumeKey] ?? 0.5) * 100;
+        input.style.background = `linear-gradient(to right, #29DDF6 ${percent}%, #e5e7eb ${percent}%)`;
+      }
+    });
+  }, [sounds, uiSettings]);
 
   // ---- Weather Modes ----
   const weatherModes = [
@@ -74,8 +88,8 @@ function ModeSoundModal({
           <button
             onClick={() => setActiveTab("sounds")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition w-full ${activeTab === "sounds"
-                ? "khrono-color text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              ? "khrono-color text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
           >
             🎵 Sounds
@@ -83,8 +97,8 @@ function ModeSoundModal({
           <button
             onClick={() => setActiveTab("weather")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition w-full ${activeTab === "weather"
-                ? "khrono-color text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              ? "khrono-color text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
           >
             🌦 Weather
@@ -144,22 +158,27 @@ function ModeSoundModal({
                     {isActive && (
                       <div className="flex items-center gap-2 mt-2 w-full">
                         <input
+                          id={`${sound.key}-slider`}
                           type="range"
                           min="0"
                           max="1"
                           step="0.05"
                           value={uiSettings[volumeKey] ?? 0.5}
                           onChange={(e) => {
-                            const value = parseFloat(e.target.value);
-                            changeVolume(sound, value);
+                            const newVolume = parseFloat(e.target.value);
+                            changeVolume(sound, newVolume);
 
-                            // dynamically update the CSS variable
-                            const min = e.target.min ? parseFloat(e.target.min) : 0;
-                            const max = e.target.max ? parseFloat(e.target.max) : 1;
-                            const percent = ((value - min) / (max - min)) * 100;
-                            e.target.style.setProperty("--range-progress", `${percent}%`);
+                            // dynamically update gradient
+                            const percent = newVolume * 100;
+                            e.target.style.background = `linear-gradient(to right, #29DDF6 ${percent}%, #e5e7eb ${percent}%)`;
                           }}
-                          className="w-full custom-accent"
+                          onInput={(e) => {
+                            // ensure the gradient updates live as you drag
+                            const newVolume = parseFloat(e.target.value);
+                            const percent = newVolume * 100;
+                            e.target.style.background = `linear-gradient(to right, #29DDF6 ${percent}%, #e5e7eb ${percent}%)`;
+                          }}
+                          className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#29DDF6]"
                           disabled={isMuted}
                         />
                         <span className="text-[10px] text-gray-600 w-8 text-right">
@@ -189,8 +208,8 @@ function ModeSoundModal({
                   key={mode.key}
                   onClick={() => setWeather(mode.key)}
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border transition ${isActive
-                      ? "bgkhronotext-color text-white borderkhroos"
-                      : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                    ? "bgkhronotext-color text-white borderkhroos"
+                    : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
                     }`}
                 >
                   {React.createElement(mode.icon, { className: "w-6 h-6" })}

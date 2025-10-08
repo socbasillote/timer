@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom';
 
-import { Timer, Clock } from 'lucide-react';
+import { Timer, Clock, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind } from 'lucide-react';
 
 import AnimatedBackground from '../animation/AnimatedBackground';
 
@@ -39,7 +39,10 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
     const [showMainContent, setShowMainContent] = useState(!isAskingName);
     const [animate, setAnimate] = useState(true);
 
+    const [weather, setWeather] = useState(null);
+    const [city, setCity] = useState("");
 
+    const API_KEY = import.meta.env.VITE_WEATHER_API;
     // Focus Mode
     useEffect(() => {
         if (!focusMode) {
@@ -78,6 +81,46 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
         }
     }, [isRunning, activeTab])
 
+
+    // Weather Fetch
+    useEffect(() => {
+        // Fetch user's geolocation
+        
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const { latitude, longitude } = pos.coords;
+
+                try {
+                    const res = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
+                    );
+                    const data = await res.json();
+
+                    setWeather(data);
+                    
+                    let place = data.name || "Unknown";
+
+                // Remove common suffixes like "City"
+                const suffixes = ["City", "Town", "Village"];
+                suffixes.forEach((suff) => {
+                    const regex = new RegExp(`\\s*${suff}$`, "i");
+                    place = place.replace(regex, "");
+                });
+
+                setCity(place.trim());
+
+
+                } catch (err) {
+                    console.error("Error fetching weather:", err);
+                    setCity("Unknown");
+                }
+            },
+            (err) => {
+                console.error("Geolocation error:", err);
+                setCity("Unknown");
+            }
+        );
+    }, []);
 
 
     /*  ---- Sound Control ---- */
@@ -146,7 +189,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
         const natureImages = themes.Nature;
         const randomIndex = Math.floor(Math.random() * natureImages.length);
         return natureImages[randomIndex].src
-    },[]) ;
+    }, []);
 
     const showGreetingButton = () => {
         setIsAskingName(false);
@@ -161,28 +204,47 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                 setShowGreeting(false);
             }, 1000); // fade-out duration (matches CSS)
 
-            
-            
+
+
             return () => clearTimeout(fadeTimer);
         }, 2000);
-        
+
     }
+
+    const getWeatherIcon = (main) => {
+        switch (main) {
+            case "Clear":
+                return <Sun className="w-6 h-6 text-white" />;
+            case "Clouds":
+                return <Cloud className="w-6 h-6 text-white" />;
+            case "Rain":
+                return <CloudRain className="w-6 h-6 text-white" />;
+            case "Snow":
+                return <CloudSnow className="w-6 h-6 text-white" />;
+            case "Thunderstorm":
+                return <CloudLightning className="w-6 h-6 text-white" />;
+            default:
+                return <Wind className="w-6 h-6 text-white" />;
+        }
+    };
+
+    
 
     return (
         <div className='bg-black'>
             {isAskingName && (
-                    <div
-                        className={`fixed inset-0 flex items-center justify-center bg-black backdrop-blur-sm z-[9999] px-4 ${isFadingOut ? "" : "custom-fade-in"
-                            }`}
-                            style={{
-                                backgroundImage: `url(${randomNatureBackground})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                            }}
-                    >
-                        {!forSignUp && (
-                            <div
+                <div
+                    className={`fixed inset-0 flex items-center justify-center bg-black backdrop-blur-sm z-[9999] px-4 ${isFadingOut ? "" : "custom-fade-in"
+                        }`}
+                    style={{
+                        backgroundImage: `url(${randomNatureBackground})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                    }}
+                >
+                    {!forSignUp && (
+                        <div
                             className={`flex flex-col items-center text-center gap-8 max-w-lg w-full transform transition-transform duration-700 ${isFadingOut ? "scale-95" : "scale-100"
                                 }`}
                         >
@@ -219,11 +281,11 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                 </button>
                             </div>
                         </div>
-                        )}
+                    )}
 
-                        {forSignUp && (
+                    {forSignUp && (
                         <div className={`absolute inset-0 flex flex-col items-center justify-center text-white text-center transition-opacity duration-700 ${forSignUp ? "opacity-100" : "opacity-0"}`}
-                        style={{
+                            style={{
                                 backgroundImage: `url(${randomNatureBackground})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
@@ -245,83 +307,94 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                             </button>
                         </div>
                     )}
-                        
-                    </div>
+
+                </div>
 
 
 
             )}
-
-
 
             {showGreeting && username && (
-            <div className={`greeting-screen fixed inset-0 flex flex-col items-center justify-center text-center z-[9999]`}
-            style={{
-                                backgroundImage: `url(${randomNatureBackground})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                            }}
-            >
+                <div className={`greeting-screen fixed inset-0 flex flex-col items-center justify-center text-center z-[9999]`}
+                    style={{
+                        backgroundImage: `url(${randomNatureBackground})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                    }}
+                >
 
-                <h1 className="text-5xl font-bold text-white animate-fade-in-up">
-                Welcome, {username}!
-                </h1>
-                <p className="mt-4 text-xl text-white/80 animate-fade-in-up delay-200">
-                Glad to see you here.
-                </p>
-            </div>
+                    <h1 className="text-5xl font-bold text-white animate-fade-in-up">
+                        Welcome, {username}!
+                    </h1>
+                    <p className="mt-4 text-xl text-white/80 animate-fade-in-up delay-200">
+                        Glad to see you here.
+                    </p>
+                </div>
             )}
-
-
 
             {showMainContent && (
                 <AnimatedBackground bgImage={bgImage} zoom={viewMode === "pomodoro"}>
                     <div className='min-h-screen flex flex-col'>
                         <WeatherAnimation mode={uiSettings.weather} />
                         {/* Navigation */}
-                        <div className=' shadow-s   sticky top-0 z-50 w-full'>
-                            <div className=' mx-auto px-4 sm:px-6 lg:px-8'>
-                                <nav className='p-3  flex gap-3 justify-between'>
-                                    <Link to="/" className='relative inline-block'>
-                                        <h1 className='relative text-2xl font-semibold text-white z-10'>Khronoflow</h1> 
-                                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
-                                        </Link>
-                                    {/* <Link to="/options" className='text-white'>Options</Link>  */}
-                                    <div className={` ${isMouseActive ? '' : 'fade'}`}>
-                                        <button
-                                            onClick={() => {
-                                                if (viewMode === "pomodoro") {
-                                                    const confirmSwitch = window.confirm(
-                                                        "Switching to Clock will pause your Pomodoro session. Continue?"
-                                                    );
-                                                    if (!confirmSwitch) return; // cancel switch
-                                                }
+                        <nav className="p-3 px-6 grid grid-cols-3 items-center">
+                            {/* Left: Logo */}
+                            <Link to="/" className="justify-self-start relative inline-block">
+                                <h1 className="relative text-2xl font-semibold text-white z-10">Khronoflow</h1>
+                                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
+                            </Link>
 
-                                                setViewMode(viewMode === "pomodoro" ? "clock" : "pomodoro");
-                                                setIsRunning(false);
-                                            }}
-                                            className="p-2 bg-white/20 text-white rounded-full hover:bg-white/30 transition"
-                                        >
-                                            {viewMode === "pomodoro" ? (
-                                                <Clock className="w-6 h-6" />
-                                            ) : (
-                                                <Timer className="w-6 h-6" />
-                                            )}
-                                        </button>
-                                        
-                                    </div>
-
-                                </nav>
+                            {/* Center: Weather */}
+                            <div className={`justify-self-center text-center `}>
+                                {viewMode === "pomodoro" ? (
+                                    ""
+                                ) : (
+                                    weather && (
+                                        <div className="flex flex-col items-center">
+                                            <div className="flex items-center gap-2">
+                                                {getWeatherIcon(weather.weather[0].main)}
+                                                <p className="text-white text-sm">{Math.round(weather.main.temp)}°C</p>
+                                            </div>
+                                            <p className="text-xs text-white opacity-70">{city}</p>
+                                        </div>
+                                    )
+                                )}
                             </div>
-                        </div>
+
+                            {/* Right: Buttons */}
+                            <div className="justify-self-end flex gap-4">
+                                <div className={`boxfade ${isMouseActive ? "" : "box"}`}>
+                                    <button
+                                        onClick={() => {
+                                            if (viewMode === "pomodoro") {
+                                                const confirmSwitch = window.confirm(
+                                                    "Switching to Clock will pause your Pomodoro session. Continue?"
+                                                );
+                                                if (!confirmSwitch) return;
+                                            }
+                                            setViewMode(viewMode === "pomodoro" ? "clock" : "pomodoro");
+                                            setIsRunning(false);
+                                        }}
+                                        className="p-2 bg-white/20 text-white rounded-full hover:bg-white/30 transition"
+                                    >
+                                        {viewMode === "pomodoro" ? (
+                                            <Clock className="w-6 h-6" />
+                                        ) : (
+                                            <Timer className="w-6 h-6" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </nav>
+
 
                         <div className='flex-1 p-6 flex min-h-0'>
                             {viewMode === 'pomodoro' ? (
                                 // Pomodoro
-                                <div 
-                                className={
-                                    `flex-1 flex items-center justify-center  `
+                                <div
+                                    className={
+                                        `flex-1 flex items-center justify-center  `
                                     }>
                                     <PomodoroTimer
                                         settings={settings}

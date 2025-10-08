@@ -1,11 +1,29 @@
 import React, { useEffect, useState } from "react";
 
+import quotes from "../appdata/quotes";
+
+
 function ClockTimer({ clockSettings, username, animate }) {
     const [now, setNow] = useState(new Date());
+    const [quoteOfTheDay, setQuoteOfTheDay] = useState({ quote: "", author: "" });
 
     useEffect(() => {
         const interval = setInterval(() => setNow(new Date()), 1000);
         return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const today = new Date().toDateString();
+        const savedData = JSON.parse(localStorage.getItem("quoteOfTheDay"));
+
+        if (savedData && savedData.date === today) {
+            setQuoteOfTheDay(savedData.quote);
+        } else {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            const data = { date: today, quote: randomQuote };
+            localStorage.setItem('quoteOfTheDay', JSON.stringify(data));
+            setQuoteOfTheDay(randomQuote);
+        }
     }, []);
 
     const formatTime = (date) => {
@@ -41,11 +59,11 @@ function ClockTimer({ clockSettings, username, animate }) {
                     <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
                          w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
 
-                    <h6 className="text-sm text-white">
-                    Nothing in this world can take the place of persistence
+                    <h6 className="text-sm text-white italic">
+                        "{quoteOfTheDay.quote || "Loading quote..."}"
                     </h6>
                     <p className="text-xs text-white opacity-80">
-                    Calvin Coolidge
+                        {quoteOfTheDay.author}
                     </p>
                 </div>
             </div>

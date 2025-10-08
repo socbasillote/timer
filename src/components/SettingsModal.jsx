@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
 function NumberInput({ label, keyName, min = 1, defaultValue, settings, updateSetting }) {
@@ -48,7 +48,7 @@ function NumberInput({ label, keyName, min = 1, defaultValue, settings, updateSe
         onChange={handleChange}
         onBlur={handleBlur}
         className="w-full border border-gray-300 rounded-lg px-3 py-2 
-                   text-sm focus:ring-2 focus:ring-blue-400 
+                   text-sm focus:ring-2 focus:ring-[#57dcee]
                    focus:outline-none transition bg-white"
       />
     </div>
@@ -73,7 +73,7 @@ function ColorInput({ label, keyName, settings, updateSetting, options }) {
           <button
             key={color}
             className={`w-7 h-7 rounded-full border-2 transition 
-              ${value === color ? "border-gray-800 scale-110" : "border-gray-300 hover:border-gray-500"}`}
+              ${value === color ? "borderkhroos2 scale-110" : "border-gray-300 hover:border-gray-400"}`}
             style={{ backgroundColor: color }}
             onClick={() => updateSetting(keyName, color)}
             aria-label={`${label} ${color}`}
@@ -91,6 +91,15 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
   const tabs = ["Timer", "Design", "Notification"];
   const [activeTab, setActiveTab] = useState("Timer");
 
+  const volumeRef = useRef();
+
+  useEffect(() => {
+    if (volumeRef.current) {
+      const percent = (settings.notificationVolume ?? 0.5) * 100;
+      volumeRef.current.style.background = `linear-gradient(to right, #29DDF6 ${percent}%, #9ca3af ${percent}%)`;
+    }
+  }, [settings.notificationVolume]);
+
   // ✅ Correct functional updater — uses prev not the stale outer `settings`
   const updateSetting = (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -100,14 +109,12 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
   const Toggle = ({ enabled, onToggle }) => (
     <button
       onClick={onToggle}
-      className={`w-10 h-5 flex items-center rounded-full p-1 transition-colors ${
-        enabled ? "bg-blue-600" : "bg-gray-400"
-      }`}
+      className={`w-10 h-5 flex items-center rounded-full p-1 transition-colors ${enabled ? "bgkhronotext-color " : "bg-gray-400"
+        }`}
     >
       <div
-        className={`bg-white w-3 h-3 rounded-full shadow-md transform transition-transform ${
-          enabled ? "translate-x-5" : "translate-x-0"
-        }`}
+        className={`bg-white w-3 h-3 rounded-full shadow-md transform transition-transform ${enabled ? "translate-x-5" : "translate-x-0"
+          }`}
       />
     </button>
   );
@@ -137,7 +144,7 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
           </button>
         </div>
 
-        
+
 
         {/* Tabs */}
         <div className="flex space-x-2 border-b border-gray-200 mb-4">
@@ -145,10 +152,9 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
             <button
               key={tab}
               className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-all duration-200 
-                ${
-                  activeTab === tab
-                    ? "bg-blue-500 text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                ${activeTab === tab
+                  ? "khrono-color text-white shadow-sm"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -162,27 +168,37 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
           {/* Timer */}
           {activeTab === "Timer" && (
             <div className="space-y-4">
-              <NumberInput
-                label="Pomodoro (minutes)"
-                keyName="workTime"
-                defaultValue={25}
-                settings={settings}
-                updateSetting={updateSetting}
-              />
-              <NumberInput
-                label="Short Break (minutes)"
-                keyName="shortBreak"
-                defaultValue={5}
-                settings={settings}
-                updateSetting={updateSetting}
-              />
-              <NumberInput
-                label="Long Break (minutes)"
-                keyName="longBreak"
-                defaultValue={15}
-                settings={settings}
-                updateSetting={updateSetting}
-              />
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <NumberInput
+                    label="Pomodoro (m)"
+                    keyName="workTime"
+                    defaultValue={25}
+                    settings={settings}
+                    updateSetting={updateSetting}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <NumberInput
+                    label="Short Break (m)"
+                    keyName="shortBreak"
+                    defaultValue={5}
+                    settings={settings}
+                    updateSetting={updateSetting}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <NumberInput
+                    label="Long Break (m)"
+                    keyName="longBreak"
+                    defaultValue={15}
+                    settings={settings}
+                    updateSetting={updateSetting}
+                  />
+                </div>
+              </div>
 
               <NumberInput
                 label="Long Break Interval"
@@ -223,19 +239,31 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
           {activeTab === "Design" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label htmlFor="progressStyle" className="font-medium text-gray-700">
-                  Progress Style
-                </label>
-                <select
-                  id="progressStyle"
-                  name="progressStyle"
-                  value={settings.progressStyle ?? "ring"}
-                  onChange={(e) => updateSetting("progressStyle", e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                >
-                  <option value="ring">Ring</option>
-                  <option value="line">Line</option>
-                </select>
+                <span className="text-sm font-medium text-gray-700">Progress Style</span>
+
+                <div className="flex items-center space-x-2">
+                  {/* Ring Option */}
+                  <button
+                    onClick={() => updateSetting("progressStyle", "ring")}
+                    className={`px-4 py-1 rounded-full text-sm font-medium transition 
+        ${settings.progressStyle === "ring"
+                        ? "bg-[#29DDF6] text-white shadow-md"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                  >
+                    Ring
+                  </button>
+
+                  {/* Line Option */}
+                  <button
+                    onClick={() => updateSetting("progressStyle", "line")}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition 
+        ${settings.progressStyle === "line"
+                        ? "bg-[#29DDF6] text-white shadow-md"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                  >
+                    Line
+                  </button>
+                </div>
               </div>
 
               <ColorInput
@@ -283,16 +311,34 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
                 </label>
                 <div className="flex items-center gap-2">
                   <input
+                    ref={volumeRef}
                     id="notificationVolume"
                     type="range"
                     min="0"
                     max="1"
                     step="0.05"
                     value={settings.notificationVolume ?? 0.5}
-                    onChange={(e) =>
-                      updateSetting("notificationVolume", parseFloat(e.target.value))
-                    }
-                    className="w-full accent-blue-500"
+                    onChange={(e) => updateSetting("notificationVolume", parseFloat(e.target.value))}
+                    style={{
+                      background: `linear-gradient(to right, #29DDF6 ${(settings.notificationVolume ?? 0.5) * 100}%, #9ca3af ${(settings.notificationVolume ?? 0.5) * 100}%)`
+                    }}
+                    className="
+                      w-full h-2 rounded-lg appearance-none cursor-pointer
+                      [&::-webkit-slider-runnable-track]:h-2 
+                      [&::-webkit-slider-runnable-track]:rounded-lg
+                      [&::-moz-range-track]:h-2 
+                      [&::-moz-range-track]:rounded-lg
+                      [&::-webkit-slider-thumb]:appearance-none 
+                      [&::-webkit-slider-thumb]:w-4 
+                      [&::-webkit-slider-thumb]:h-4 
+                      [&::-webkit-slider-thumb]:rounded-full 
+                      [&::-webkit-slider-thumb]:bg-[#29DDF6]
+                      [&::-webkit-slider-thumb]:border-2 
+                      [&::-webkit-slider-thumb]:border-[#29DDF6]
+                      [&::-webkit-slider-thumb]:mt-[-4px]
+                      [&::-webkit-slider-thumb]:transition
+                      [&::-webkit-slider-thumb]:hover:bg-[#29DDF6]/80
+                    "
                   />
                   <span className="text-xs text-gray-600 w-10 text-right">
                     {Math.round((settings.notificationVolume ?? 0.5) * 100)}%

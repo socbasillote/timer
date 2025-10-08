@@ -9,7 +9,7 @@ function ThemeModal({ isOpen, onClose, settings, setSettings }) {
   // Theme data with 4 templates each
   
 
-  const [activeTheme, setActiveTheme] = useState("Anime");
+  const [activeTheme, setActiveTheme] = useState("Lofi");
 
   return (
     <>

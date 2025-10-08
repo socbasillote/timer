@@ -1,5 +1,5 @@
 const themes = {
-    Anime: [
+    Lofi: [
       { src: "https://images.alphacoders.com/135/thumb-1920-1350899.png", font: "'Varela Round', sans-serif", subFont: "'Montserrat', sans-serif", location: 'Lofi Chill Room', owner: 'robokoto', site: 'alphacoders.com' },
       { src: "https://images4.alphacoders.com/134/thumb-1920-1349198.png", font: "'Varela Round', sans-serif", subFont: "'Montserrat', sans-serif", location: 'Lofi Cafe Evening Ambience', owner: 'robokoto', site: 'alphacoders.com' },
       { src: "https://images5.alphacoders.com/138/thumb-1920-1386977.png", font: "'Bubblegum Sans', sans-serif", subFont: "'Montserrat', sans-serif", location: 'Cozy Lofi Sunset', owner: 'robokoboto', site: 'alphacoders.com' },

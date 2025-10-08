@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { RotateCcw, ArrowRight,Play, CirclePause   } from 'lucide-react';
+import { RotateCcw, ArrowRight, Play, CirclePause } from 'lucide-react';
 
 import ProgressRing from '../components/ProgressRing';
 import ProgressLine from '../components/ProgressLine';
 import SessionCountGraph from '../components/SessionCountGraph';
 
-function PomodoroTimer({ 
-    settings, 
-    setSettings, 
-    isRunning, 
+function PomodoroTimer({
+    settings,
+    setSettings,
+    isRunning,
     setIsRunning,
     activeTab,
     setActiveTab,
@@ -18,7 +18,7 @@ function PomodoroTimer({
 
     const calledRef = useRef(false);
     const [backgroundColor, setBackgroundColor] = useState("bgPomodoro")
-    
+
 
 
     const bgColor = settings.bgColor;
@@ -66,60 +66,58 @@ function PomodoroTimer({
     }
 
 
-        // timer states handler
-        useEffect(() => {
-            let timer;
-            if (isRunning) {
-                timer = setInterval(() => {
-                    setTimeLeft((prev) => {
-                        if (prev === 0 && !calledRef.current) {
-                            timeHandler();
-                            calledRef.current = true;
-                            return prev
-                        }
-                        return prev - 1;
-                    })
-                }, 1000)
+    // timer states handler
+    useEffect(() => {
+        let timer;
+        if (isRunning) {
+            timer = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev === 0 && !calledRef.current) {
+                        timeHandler();
+                        calledRef.current = true;
+                        return prev
+                    }
+                    return prev - 1;
+                })
+            }, 1000)
+        }
+
+
+        return () => {
+            clearInterval(timer)
+            calledRef.current = false;
+        };
+
+    }, [isRunning, mode])
+
+    useEffect(() => {
+        const timeMap = {
+            bgPomodoro: workTime * 60,
+            bgShortBreak: shortBreak * 60,
+            bgLongBreak: longBreak * 60,
+        };
+
+        if (timeMap[backgroundColor] !== undefined) {
+            setTimeLeft(timeMap[backgroundColor]);
+        }
+    }, [workTime, shortBreak, longBreak, backgroundColor]);
+
+    // Notification
+    useEffect(() => {
+        if (notificationOn) {
+            if (timeLeft === notificationTime && backgroundColor == 'bgPomodoro') {
+                notify(`${notificationTime} seconds left!`)
+                playSound('/remindernotification2.mp3');
             }
-    
-    
-            return () => {
-                clearInterval(timer)
-                calledRef.current = false;
-            };
-    
-        }, [isRunning, mode])
-    
-        useEffect(() => {
-            const timeMap = {
-                bgPomodoro: workTime * 60,
-                bgShortBreak: shortBreak * 60,
-                bgLongBreak: longBreak * 60,
-            };
-    
-            if (timeMap[backgroundColor] !== undefined) {
-                setTimeLeft(timeMap[backgroundColor]);
+            if (timeLeft === 0 && backgroundColor == 'bgPomodoro') {
+                notify("Time's up!")
+                playSound('/finishtime.mp3');
             }
-        }, [workTime, shortBreak, longBreak, backgroundColor]);
-    
-        
-    
-        // Notification
-        useEffect(() => {
-            if (notificationOn) {
-                if (timeLeft === notificationTime && backgroundColor == 'bgPomodoro') {
-                    notify(`${notificationTime} seconds left!`)
-                    playSound('/remindernotification2.mp3');
-                }
-                if (timeLeft === 0 && backgroundColor == 'bgPomodoro') {
-                    notify("Time's up!")
-                    playSound('/finishtime.mp3');
-                }
-            }
-    
-        }, [timeLeft])
-    
-        
+        }
+
+    }, [timeLeft])
+
+
 
 
     const timeHandler = () => {
@@ -131,7 +129,7 @@ function PomodoroTimer({
             console.log('pomodoro');
             console.log(sessionCount)
             setBackgroundColor('bgPomodoro')
-            
+
             playSound('/startnotification2.mp3');
         } else if (sessionCount % longBreakInterval === 0) {
             if (!autoLongBreak) { setIsRunning(false); }
@@ -255,50 +253,50 @@ function PomodoroTimer({
             <div className={`${animate ? 'animate-fade-in-up delay-1000' : ""}`}>
                 <div className="" >
                     {/* Set timer buttons */}
-
+                    
                     <div className="flex justify-center gap-3 mb-10">
+                        {/* Pomodoro Button */}
                         <button
                             onClick={pomodoroButton}
-                            className={`${backgroundColor === 'bgPomodoro'
-                                ? 'bg-white/30 shadow-md'   // active style
-                                : 'bg-white/10 shadow-sm'}  // inactive style
-                                                    text-white text-sm rounded-lg px-4 py-2 cursor-pointer
-                                                    transition-all duration-300 hover:bg-white/30 hover:scale-105 active:scale-95
-                                                    fade-box ${isMouseActive ? '' : 'fade'}
-                                                    `}
+                            className={`fade-box ${isMouseActive ? '' : 'fade'} z-10 relative
+      ${backgroundColor === 'bgPomodoro' ? 'bg-white/30 shadow-md' : 'bg-white/20 shadow-sm'}
+      text-white text-sm rounded-lg px-4 py-2 cursor-pointer
+      transition-all duration-300 hover:bg-white/30 hover:scale-105 active:scale-95
+      backdrop-blur-sm`}
                             style={{ fontFamily: subFont }}
                         >
                             Pomodoro
                         </button>
 
+                        {/* Short Break Button */}
                         <button
                             onClick={shortBreakButton}
-                            className={`${backgroundColor === 'bgShortBreak'
-                                ? 'bg-white/30 shadow-md'
-                                : 'bg-white/10 shadow-sm'} 
-                                                    text-white text-sm rounded-lg px-4 py-2 cursor-pointer
-                                                    transition-all duration-300 hover:bg-white/30 hover:scale-105 active:scale-95
-                                                    fade-box ${isMouseActive ? '' : 'fade'}
-                                                    `}
+                            className={`fade-box ${isMouseActive ? '' : 'fade'} z-10 relative
+      ${backgroundColor === 'bgShortBreak' ? 'bg-white/30 shadow-md' : 'bg-white/20 shadow-sm'}
+      text-white text-sm rounded-lg px-4 py-2 cursor-pointer
+      transition-all duration-300 hover:bg-white/30 hover:scale-105 active:scale-95
+      backdrop-blur-sm`}
                             style={{ fontFamily: subFont }}
                         >
                             Short Break
                         </button>
 
+                        {/* Long Break Button */}
                         <button
                             onClick={longBreakButton}
-                            className={`${backgroundColor === 'bgLongBreak'
-                                ? 'bg-white/30 shadow-md'
-                                : 'bg-white/10 shadow-sm'} 
-                                                    text-white text-sm rounded-lg px-4 py-2 cursor-pointer
-                                                    transition-all duration-300 hover:bg-white/30 hover:scale-105 active:scale-95
-                                                    fade-box ${isMouseActive ? '' : 'fade'}
-                                                    `}
+                            className={`fade-box ${isMouseActive ? '' : 'fade'} z-10 relative
+      ${backgroundColor === 'bgLongBreak' ? 'bg-white/50 shadow-md' : 'bg-white/20 shadow-sm'}
+      text-white text-sm rounded-lg px-4 py-2 cursor-pointer
+      transition-all duration-300 hover:bg-white/30 hover:scale-105 active:scale-95
+      backdrop-blur-sm`}
                             style={{ fontFamily: subFont }}
                         >
                             Long Break
                         </button>
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                         w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
                     </div>
+
 
                     {/* Progress Ring */}
                     <div className="flex justify-center items-center relative">
@@ -409,7 +407,7 @@ function PomodoroTimer({
     hover:scale-105 active:scale-95
                                                 "
                                 >
-                                    {isRunning ? <CirclePause size={32}/> : <Play size={32}/>}
+                                    {isRunning ? <CirclePause size={32} /> : <Play size={32} />}
                                 </button>
 
                                 {/* Reset button */}
@@ -440,9 +438,9 @@ function PomodoroTimer({
                             </div>
                         </div>
 
-                        {/* <div className='text-center mt-3 text-white'>
-                            <p>Session count: {sessionCount}</p>
-                        </div> */}
+                        <div className='text-center mt-3 text-white'>
+                            <p className='text-sm'>Session count: {sessionCount}</p>
+                        </div>
                     </div>
 
                 </div>
