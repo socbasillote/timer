@@ -7,13 +7,11 @@ import SessionCountGraph from '../components/SessionCountGraph';
 
 function PomodoroTimer({
     settings,
-    setSettings,
     isRunning,
     setIsRunning,
-    activeTab,
-    setActiveTab,
     isMouseActive,
-    animate
+    animate,
+    userRecord, setUserRecord
 }) {
 
     const calledRef = useRef(false);
@@ -117,7 +115,12 @@ function PomodoroTimer({
 
     }, [timeLeft])
 
-
+    // Counting
+    useEffect(() => {
+        if (sessionCount > 0) {
+            setUserRecord(prev => ({...prev, sessionCount}))
+        }
+    }, [sessionCount])
 
 
     const timeHandler = () => {
@@ -196,18 +199,17 @@ function PomodoroTimer({
 
         if (mode === 'pomodoro') {
             const newCount = sessionCount + 1;
-
             setTimeLeft(pomodoroTime);
             setMode('shortBreak')
             console.log('pomodoro');
             console.log(sessionCount)
             setBackgroundColor('bgPomodoro')
             setSessionCount(newCount)
-            playSound('/startPomodoro.mp3');
+            
             setIsRunning(false);
             setTimeout(() => {
                 setIsRunning(true);
-            }, 2000);
+            }, 1000);
 
         } else if (sessionCount % longBreakInterval === 0 && mode == 'shortBreak') {
             console.log('long break')
@@ -217,7 +219,7 @@ function PomodoroTimer({
             setIsRunning(false);
             setTimeout(() => {
                 setIsRunning(true);
-            }, 2000);
+            }, 1000);
         } else {
             console.log('shortbreak')
             setTimeLeft(shortBreakTime);
@@ -226,9 +228,9 @@ function PomodoroTimer({
             setIsRunning(false);
             setTimeout(() => {
                 setIsRunning(true);
-            }, 2000);
+            }, 1000);
         }
-
+        console.log('clicked next')
     }
 
     const notify = (message) => {
@@ -400,11 +402,11 @@ function PomodoroTimer({
                                 <button
                                     onClick={isRunning ? pauseButton : startButton}
                                     className="relative px-5 py-3 rounded-2xl cursor-pointer font-medium
-    text-white transition-all duration-300 ease-in-out
-    bg-white/30 border border-white/25 backdrop-blur-2xl
-    shadow-[0_4px_30px_rgba(255,255,255,0.1)]
-    hover:bg-white/25 hover:shadow-[0_6px_40px_rgba(255,255,255,0.15)]
-    hover:scale-105 active:scale-95
+                                                text-white transition-all duration-300 ease-in-out
+                                                bg-white/30 border border-white/25 backdrop-blur-2xl
+                                                shadow-[0_4px_30px_rgba(255,255,255,0.1)]
+                                                hover:bg-white/25 hover:shadow-[0_6px_40px_rgba(255,255,255,0.15)]
+                                                hover:scale-105 active:scale-95
                                                 "
                                 >
                                     {isRunning ? <CirclePause size={32} /> : <Play size={32} />}
@@ -440,6 +442,7 @@ function PomodoroTimer({
 
                         <div className='text-center mt-3 text-white'>
                             <p className='text-sm'>Session count: {sessionCount}</p>
+                            <p className='text-sm'>user count: {userRecord.sessionCount}</p>
                         </div>
                     </div>
 

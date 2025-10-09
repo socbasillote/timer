@@ -15,7 +15,7 @@ import PomodoroTimer from '../feature/PomodoroTimer';
 import themes from '../appdata/themes';
 
 
-function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSettings, setClockSettings }) {
+function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSettings, setClockSettings, userRecord, setUserRecord }) {
 
     const [viewMode, setViewMode] = useState('clock');
     const [isMuted, setIsMuted] = useState(false);
@@ -348,7 +348,7 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                             {/* Center: Weather */}
                             <div className={`justify-self-center text-center `}>
                                 {viewMode === "pomodoro" ? (
-                                    ""
+                                    <p className='text-white'>{userRecord.sessionCount}</p>
                                 ) : (
                                     weather && (
                                         <div className="flex flex-col items-center">
@@ -405,6 +405,8 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                         setActiveTab={setActiveTab}
                                         isMouseActive={isMouseActive}
                                         animate={animate}
+                                        userRecord={userRecord}
+                                        setUserRecord={setUserRecord}
                                     />
                                 </div>
                             ) : (

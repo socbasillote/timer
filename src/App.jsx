@@ -17,9 +17,9 @@ function App() {
     : {
         text: "",
         extraText: "",
-        bgColor: "#FF0000",
-        bgBreakColor: "#3e3e3e",
-        bgLongBreak: "#f0fff8",
+        bgColor: "#fff",
+        bgBreakColor: "#AAF5FF",
+        bgLongBreak: "#D3DBFF",
         workTime: 0.2,
         shortBreak: 0.1,
         longBreak: 6,
@@ -27,7 +27,7 @@ function App() {
         autoBreak: true,
         autoLongBreak: true,
         notificationOn: true,
-        notificationTime: 1,
+        notificationTime: 5,
         notificationVolume: 0.5,
         bgImage: "https://images.unsplash.com/photo-1479030160180-b1860951d696?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         fontStyle: "",
@@ -35,6 +35,41 @@ function App() {
         progressStyle: 'ring',
         focusMode: true,
       };
+  })
+
+  // todo
+/*   const [pomodoroSettings, setPomodoroSettings] = useState( () => {
+    const saved = localStorage.getItem('pomodoroSettings');
+    return saved 
+    ? JSON.parse(saved)
+    : {
+      bgColor: "",
+      bgBreakColor: "",
+      bgLongBreak: "",
+      workTime: "",
+      shortBreak: "",
+      longBreak: "",
+      longBreakInterval: 4,
+      autoBreak: true,
+      autoLongBreak: true,
+      notificationOn: true,
+      notificationTime: 1,
+      notificationVolume: 0.5,
+      progressStyle: 'ring',
+      focusMode: true,
+    }
+  }) */
+
+  const [userRecord, setUserRecord] = useState(() => {
+    const saved = localStorage.getItem('userRecord');
+    return saved
+    ? JSON.parse(saved)
+    : {
+      sessionCount: 0,
+      entireSessionCount: 0,
+      shortbreakCount: 0,
+      longbreakCount: 0,
+    }
   })
 
   const [uiSettings, setUiSettings] = useState(() => {
@@ -74,6 +109,11 @@ function App() {
   
  }, [settings]);
   
+ useEffect(() => {
+  localStorage.setItem('userRecord', JSON.stringify(userRecord));
+  
+ }, [userRecord]);
+  
 
   return (
     <div className='rain'>
@@ -90,6 +130,8 @@ function App() {
                         setUiSettings={setUiSettings}
                         clockSettings={clockSettings}
                         setClockSettings={setClockSettings}
+                        userRecord={userRecord}
+                        setUserRecord={setUserRecord}
                       />
                     } 
           />
