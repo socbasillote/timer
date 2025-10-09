@@ -7,8 +7,11 @@ import SessionCountGraph from '../components/SessionCountGraph';
 
 function PomodoroTimer({
     settings,
+    setSettings,
     isRunning,
     setIsRunning,
+    activeTab,
+    setActiveTab,
     isMouseActive,
     animate,
     userRecord, setUserRecord
@@ -37,8 +40,21 @@ function PomodoroTimer({
 
     const [timeLeft, setTimeLeft] = useState(workTime * 60);
     const [mode, setMode] = useState('');
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [cycleCount, setCycleCount] = useState(0);
+    const [sessionCount, setSessionCount] = useState(() => {
+        const storedRecord = JSON.parse(localStorage.getItem("userRecord"));
+        const today = new Date().toDateString();
 
-    const [sessionCount, setSessionCount] = useState(0);
+        if (storedRecord && storedRecord.date === today) {
+            return storedRecord.sessionCount;  // ✅ keep today's count
+        } else {
+            // reset for a new day
+            const newRecord = { sessionCount: 0, date: today };
+            localStorage.setItem("userRecord", JSON.stringify(newRecord));
+            return 0;
+        }
+    });
 
 
 
@@ -62,6 +78,41 @@ function PomodoroTimer({
         audio.volume = settings.notificationVolume;
         audio.play();
     }
+
+    // Counting
+    useEffect(() => {
+    const today = new Date().toDateString();
+
+    // Check if we already have a record
+    const storedRecord = JSON.parse(localStorage.getItem("userRecord"));
+
+    if (storedRecord) {
+        // If the date is different from today, reset session count
+        if (storedRecord.date !== today) {
+            const newRecord = { sessionCount: 0, date: today };
+            setUserRecord(newRecord);
+            localStorage.setItem("userRecord", JSON.stringify(newRecord));
+        } else {
+            // Otherwise, keep today's record
+            setUserRecord(storedRecord);
+        }
+    } else {
+        // Initialize if no record exists
+        const newRecord = { sessionCount: 0, date: today };
+        setUserRecord(newRecord);
+        localStorage.setItem("userRecord", JSON.stringify(newRecord));
+    }
+}, []);
+
+// Save session count whenever it changes
+useEffect(() => {
+    if (sessionCount > 0) {
+        const today = new Date().toDateString();
+        const updatedRecord = { sessionCount, date: today };
+        setUserRecord(updatedRecord);
+        localStorage.setItem("userRecord", JSON.stringify(updatedRecord));
+    }
+}, [sessionCount]);
 
 
     // timer states handler
@@ -115,46 +166,61 @@ function PomodoroTimer({
 
     }, [timeLeft])
 
-    // Counting
-    useEffect(() => {
-        if (sessionCount > 0) {
-            setUserRecord(prev => ({...prev, sessionCount}))
-        }
-    }, [sessionCount])
 
 
-    const timeHandler = () => {
-        if (mode === 'pomodoro') {
-            const newCount = sessionCount + 1;
-            setSessionCount(newCount)
-            setTimeLeft(pomodoroTime);
-            setMode('shortBreak')
-            console.log('pomodoro');
-            console.log(sessionCount)
-            setBackgroundColor('bgPomodoro')
 
-            playSound('/startnotification2.mp3');
-        } else if (sessionCount % longBreakInterval === 0) {
-            if (!autoLongBreak) { setIsRunning(false); }
+const timeHandler = () => {
+  if (mode === "pomodoro") {
+    // Pomodoro finished → increase counts
+    const newSessionCount = sessionCount + 1;
+    const newCycleCount = cycleCount + 1;
 
-            console.log('long break')
-            setMode('pomodoro')
-            setTimeLeft(longBreakTime);
-            setBackgroundColor('bgLongBreak')
-        } else {
-            if (!autoBreak) { setIsRunning(false); }
+    setSessionCount(newSessionCount);
+    setCycleCount(newCycleCount);
 
-            console.log('shortbreak')
-            setTimeLeft(shortBreakTime);
-            setMode('pomodoro')
-            setBackgroundColor('bgShortBreak')
-        }
+    playSound("/startnotification2.mp3");
+
+    
+
+    // Determine next mode
+    if (newCycleCount % longBreakInterval === 0) {
+      // Time for long break
+      setMode("longBreak");
+      setTimeLeft(longBreakTime);
+      setBackgroundColor("bgLongBreak");
+      if (!autoLongBreak) setIsRunning(false);
+      console.log(cycleCount)
+    } else {
+      // Time for short break
+      setMode("shortBreak");
+      setTimeLeft(shortBreakTime);
+      setBackgroundColor("bgShortBreak");
+      if (!autoBreak) setIsRunning(false);
+      console.log("short break");
     }
+  } else if (mode === 'longBreak') {
+    setCycleCount(0);
+    setMode("pomodoro");
+    setTimeLeft(pomodoroTime);
+    setBackgroundColor("bgPomodoro");
+    playSound("/startnotification2.mp3");
+    console.log("long break ended → reset cycle");
+  } else {
+    // A break just ended → go back to pomodoro
+    setMode("pomodoro");
+    setTimeLeft(pomodoroTime);
+    setBackgroundColor("bgPomodoro");
+    if(cycleCount !== 0) {
+      playSound("/startnotification2.mp3");
+    }
+    console.log("back to pomodoro");
+  }
+};
 
     const startButton = () => {
 
-        if (sessionCount == 0 && backgroundColor == 'bgPomodoro') {
-            setSessionCount(prev => prev + 1);
+        if (cycleCount == 0 && backgroundColor == 'bgPomodoro') {
+            timeHandler();
         }
         playSound('/start22.mp3');
         setIsRunning(true);
@@ -197,40 +263,8 @@ function PomodoroTimer({
 
     const nextButton = () => {
 
-        if (mode === 'pomodoro') {
-            const newCount = sessionCount + 1;
-            setTimeLeft(pomodoroTime);
-            setMode('shortBreak')
-            console.log('pomodoro');
-            console.log(sessionCount)
-            setBackgroundColor('bgPomodoro')
-            setSessionCount(newCount)
-            
-            setIsRunning(false);
-            setTimeout(() => {
-                setIsRunning(true);
-            }, 1000);
+        timeHandler();
 
-        } else if (sessionCount % longBreakInterval === 0 && mode == 'shortBreak') {
-            console.log('long break')
-            setMode('pomodoro')
-            setTimeLeft(longBreakTime);
-            setBackgroundColor('bgLongBreak')
-            setIsRunning(false);
-            setTimeout(() => {
-                setIsRunning(true);
-            }, 1000);
-        } else {
-            console.log('shortbreak')
-            setTimeLeft(shortBreakTime);
-            setMode('pomodoro')
-            setBackgroundColor('bgShortBreak')
-            setIsRunning(false);
-            setTimeout(() => {
-                setIsRunning(true);
-            }, 1000);
-        }
-        console.log('clicked next')
     }
 
     const notify = (message) => {
@@ -296,7 +330,7 @@ function PomodoroTimer({
                             Long Break
                         </button>
                         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                         w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
+                         w-[100%] h-[120%] bg-black/10 blur-2xl rounded-full -z-10"></span>
                     </div>
 
 
@@ -391,28 +425,14 @@ function PomodoroTimer({
 
                     {/* Long Break count */}
                     <div className='mt-3 flex justify-center'>
-                        <SessionCountGraph count={sessionCount} longBreakInterval={longBreakInterval} />
+                        <SessionCountGraph count={cycleCount} longBreakInterval={longBreakInterval} />
                     </div>
 
                     {/* Start Buttons */}
                     <div className={`boxfade ${isMouseActive ? '' : 'box'}`}>
                         <div className="flex justify-center mt-10">
                             <div className="flex gap-3">
-                                {/* Start / Pause button */}
-                                <button
-                                    onClick={isRunning ? pauseButton : startButton}
-                                    className="relative px-5 py-3 rounded-2xl cursor-pointer font-medium
-                                                text-white transition-all duration-300 ease-in-out
-                                                bg-white/30 border border-white/25 backdrop-blur-2xl
-                                                shadow-[0_4px_30px_rgba(255,255,255,0.1)]
-                                                hover:bg-white/25 hover:shadow-[0_6px_40px_rgba(255,255,255,0.15)]
-                                                hover:scale-105 active:scale-95
-                                                "
-                                >
-                                    {isRunning ? <CirclePause size={32} /> : <Play size={32} />}
-                                </button>
-
-                                {/* Reset button */}
+                              {/* Reset button */}
                                 {isRunning && (
                                     <div className="bg-white/20 flex justify-center px-4 py-2 rounded-lg shadow-md 
                                                             transition-all duration-300 hover:bg-white/30 hover:scale-110 active:scale-95">
@@ -424,6 +444,20 @@ function PomodoroTimer({
                                         </button>
                                     </div>
                                 )}
+
+                                {/* Start / Pause button */}
+                                <button
+                                    onClick={isRunning ? pauseButton : startButton}
+                                    className="relative px-5 py-3 rounded-2xl cursor-pointer font-medium
+    text-white transition-all duration-300 ease-in-out
+    bg-white/30 border border-white/25 backdrop-blur-2xl
+    shadow-[0_4px_30px_rgba(255,255,255,0.1)]
+    hover:bg-white/25 hover:shadow-[0_6px_40px_rgba(255,255,255,0.15)]
+    hover:scale-105 active:scale-95
+                                                "
+                                >
+                                    {isRunning ? <CirclePause size={32} /> : <Play size={32} />}
+                                </button>
 
                                 {/* Next button */}
                                 {isRunning && (
@@ -440,10 +474,9 @@ function PomodoroTimer({
                             </div>
                         </div>
 
-                        <div className='text-center mt-3 text-white'>
+                        {/* <div className='text-center mt-3 text-white'>
                             <p className='text-sm'>Session count: {sessionCount}</p>
-                            <p className='text-sm'>user count: {userRecord.sessionCount}</p>
-                        </div>
+                        </div> */}
                     </div>
 
                 </div>

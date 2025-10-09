@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom';
 
-import { Timer, Clock, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind } from 'lucide-react';
+import { Timer, Clock, Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Wind, History  } from 'lucide-react';
 
 import AnimatedBackground from '../animation/AnimatedBackground';
 
@@ -348,7 +348,22 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                             {/* Center: Weather */}
                             <div className={`justify-self-center text-center `}>
                                 {viewMode === "pomodoro" ? (
-                                    <p className='text-white'>{userRecord.sessionCount}</p>
+                                    <div className={`relative group flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1 shadow-md boxfade ${isMouseActive ? "" : "box"}`}>
+                                        <History className="text-white w-5 h-5" />
+                                        <p className="text-white text-sm font-medium">{userRecord.sessionCount}</p>
+
+                                        {/* Tooltip (below with upward arrow) */}
+                                        <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            {/* Arrow (pointing up) */}
+                                            <span className="w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-black/80"></span>
+                                            {/* Tooltip box */}
+                                            <span className="bg-black/50 text-white text-xs rounded-md px-2 py-1 whitespace-nowrap">
+                                            Today pomodoro session
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    
                                 ) : (
                                     weather && (
                                         <div className="flex flex-col items-center">
