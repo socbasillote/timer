@@ -56,8 +56,8 @@ function PomodoroTimer({
         }
     });
 
-
-
+    const [shouldStop, setShouldStop] = useState(false);
+    
     const pomodoroTime = workTime * 60;
     const shortBreakTime = shortBreak * 60;
     const longBreakTime = longBreak * 60
@@ -166,6 +166,18 @@ useEffect(() => {
 
     }, [timeLeft])
 
+// Update document title dynamically
+useEffect(() => {
+  if (backgroundColor === "bgPomodoro") {
+    document.title = isRunning
+      ? `⏱ Focus Time - ${formatTime(timeLeft)}`
+      : "Pomodoro - Paused";
+  } else if (backgroundColor === "bgShortBreak") {
+    document.title = `☕ Short Break - ${formatTime(timeLeft)}`;
+  } else if (backgroundColor === "bgLongBreak") {
+    document.title = `🌴 Long Break - ${formatTime(timeLeft)}`;
+  }
+}, [backgroundColor, timeLeft, isRunning]);
 
 
 
@@ -188,14 +200,14 @@ const timeHandler = () => {
       setMode("longBreak");
       setTimeLeft(longBreakTime);
       setBackgroundColor("bgLongBreak");
-      if (!autoLongBreak) setIsRunning(false);
+      if (!autoLongBreak) setShouldStop(true);
       console.log(cycleCount)
     } else {
       // Time for short break
       setMode("shortBreak");
       setTimeLeft(shortBreakTime);
       setBackgroundColor("bgShortBreak");
-      if (!autoBreak) setIsRunning(false);
+      if (!autoBreak) setShouldStop(true);
       console.log("short break");
     }
   } else if (mode === 'longBreak') {
@@ -213,9 +225,17 @@ const timeHandler = () => {
     if(cycleCount !== 0) {
       playSound("/startnotification2.mp3");
     }
+    if (!settings.autoStartPomodoro) setShouldStop(true);
     console.log("back to pomodoro");
   }
 };
+
+  useEffect(() => {
+    if (shouldStop) {
+      setIsRunning(false);
+      setShouldStop(false); // reset the flag
+    }
+  }, [shouldStop, setIsRunning]);
 
     const startButton = () => {
 

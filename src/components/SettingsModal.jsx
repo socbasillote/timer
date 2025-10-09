@@ -208,7 +208,14 @@ function SettingsModal({ isOpen, onClose, settings, setSettings }) {
                 updateSetting={updateSetting}
               />
 
-
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Auto Start Pomodoro</span>
+                <Toggle
+                  enabled={settings.autoStartPomodoro}
+                  onToggle={() => updateSetting("autoStartPomodoro", !settings.autoStartPomodoro)}
+                />
+              </div>
+              
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Auto Break</span>
                 <Toggle

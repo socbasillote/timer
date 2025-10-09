@@ -345,11 +345,12 @@ function HomePage({ settings, setSettings, uiSettings, setUiSettings, clockSetti
                                 <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[150%] bg-black/20 blur-2xl rounded-full -z-10"></span>
                             </Link>
 
-                            {/* Center: Weather */}
+                            {/* Center: Weather / Pomodoro session*/}
                             <div className={`justify-self-center text-center `}>
                                 {viewMode === "pomodoro" ? (
-                                    <div className={`relative group flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1 shadow-md boxfade ${isMouseActive ? "" : "box"}`}>
-                                        <History className="text-white w-5 h-5" />
+                                    <div className={`relative group flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1 shadow-md boxfade ${isMouseActive ? "" : "box"} 
+                                        transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)]`}>
+                                        <History className="text-white w-5 h-5 transition-all duration-300 group-hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.5)]" />
                                         <p className="text-white text-sm font-medium">{userRecord.sessionCount}</p>
 
                                         {/* Tooltip (below with upward arrow) */}

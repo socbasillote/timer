@@ -15,8 +15,6 @@ function App() {
     return saved
     ? JSON.parse(saved)
     : {
-        text: "",
-        extraText: "",
         bgColor: "#fff",
         bgBreakColor: "#AAF5FF",
         bgLongBreak: "#D3DBFF",
