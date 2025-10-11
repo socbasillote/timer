@@ -140,16 +140,36 @@ useEffect(() => {
     }, [isRunning, mode])
 
     useEffect(() => {
-        const timeMap = {
-            bgPomodoro: workTime * 60,
-            bgShortBreak: shortBreak * 60,
-            bgLongBreak: longBreak * 60,
-        };
-
-        if (timeMap[backgroundColor] !== undefined) {
-            setTimeLeft(timeMap[backgroundColor]);
+        // If the timer is paused — just sync the displayed time
+        if (!isRunning) {
+            if (backgroundColor === "bgPomodoro") {
+            setTimeLeft(workTime * 60);
+            } else if (backgroundColor === "bgShortBreak") {
+            setTimeLeft(shortBreak * 60);
+            } else if (backgroundColor === "bgLongBreak") {
+            setTimeLeft(longBreak * 60);
+            }
+            return;
         }
-    }, [workTime, shortBreak, longBreak, backgroundColor]);
+
+        // If running — reset only the active timer when its own duration changes
+        if (backgroundColor === "bgPomodoro") {
+            setTimeLeft(workTime * 60);
+        } else if (backgroundColor === "bgShortBreak") {
+            setTimeLeft(shortBreak * 60);
+        } else if (backgroundColor === "bgLongBreak") {
+            setTimeLeft(longBreak * 60);
+        }
+        }, [
+            backgroundColor,
+            isRunning,
+
+            // ✅ Watch only the relevant time based on current mode
+            backgroundColor === "bgPomodoro" ? workTime : null,
+            backgroundColor === "bgShortBreak" ? shortBreak : null,
+            backgroundColor === "bgLongBreak" ? longBreak : null,
+        ]
+    );
 
     // Notification
     useEffect(() => {
